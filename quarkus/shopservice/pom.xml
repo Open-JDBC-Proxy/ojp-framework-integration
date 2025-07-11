@@ -36,6 +36,11 @@
             <artifactId>quarkus-jdbc-h2</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.openjdbcproxy</groupId>
+            <artifactId>ojp-jdbc-driver</artifactId>
+            <version>0.0.4-alpha</version>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
         </dependency>
