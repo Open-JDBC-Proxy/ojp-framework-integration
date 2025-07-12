@@ -43,21 +43,13 @@ This project demonstrates a multi-entity, relational domain model with CRUD oper
 
 ### 1. Clone the repository
 
-```sh
-git clone <YOUR_REPO_URL>
-cd shopservice
-```
+>  git clone <YOUR_REPO_URL>
+
+>  cd shopservice
 
 ### 2. Configure the database
 
 Edit `src/main/resources/application.properties` if you want to change the PostgreSQL connection (default assumes user and password as `postgres`):
-
-```
-spring.datasource.url=jdbc:postgresql://localhost:5432/shopdb
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.jpa.hibernate.ddl-auto=update
-```
 
 Or use H2 for a quick start (see commented section in properties).
 
@@ -65,10 +57,10 @@ Or use H2 for a quick start (see commented section in properties).
 
 This application is not intended to be run but instead to run validation tests using the OJP (Open JDBC Proxy). Still you should be able to run it as a service with below commands.
 
-```sh
-mvn clean install
-mvn spring-boot:run
-```
+>  mvn clean install
+
+>  mvn spring-boot:run
+
 
 The API will be available at [http://localhost:8080/](http://localhost:8080/).
 
@@ -98,9 +90,9 @@ All endpoints accept and return JSON.
 Integration tests are provided for all controllers.  
 **To run all tests, including integration tests, use:**
 
-```sh
-mvn clean verify
-```
+
+>  mvn clean verify
+
 
 - This will build the project and execute all unit and integration tests.
 - Integration tests use H2 in-memory database with test-specific properties (`src/test/resources/application-test.properties`).
