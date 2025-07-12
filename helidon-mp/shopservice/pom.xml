@@ -42,6 +42,11 @@
             <groupId>io.helidon.media</groupId>
             <artifactId>helidon-media-jsonb</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
 
         <!-- JPA Integration -->
         <dependency>
@@ -124,18 +129,13 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>io.helidon.build-tools</groupId>
-                <artifactId>helidon-maven-plugin</artifactId>
-                <version>${helidon.version}</version>
-                <executions>
-                    <execution>
-                        <id>third-party-license-report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>third-party-license-report</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <mainClass>com.example.shopservice.ShopServiceApplication</mainClass>
+                    <classpathScope>runtime</classpathScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
