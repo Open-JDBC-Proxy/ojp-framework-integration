@@ -54,11 +54,6 @@
             <artifactId>micronaut-hibernate-jpa</artifactId>
             <version>${micronaut.sql.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.micronaut.sql</groupId>
-            <artifactId>micronaut-jdbc-hikari</artifactId>
-            <version>${micronaut.sql.version}</version>
-        </dependency>
 
         <!-- H2 Database -->
         <dependency>
