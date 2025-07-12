@@ -59,38 +59,60 @@ public class OrderAndOrderItemControllerIT {
 
     @Test
     void createOrderWithItemsAndGetItems() throws Exception {
-        String orderJson = String.format("""
+        // First test just creating an order without items
+        String simpleOrderJson = String.format("""
         {
-          "user":{"id":%d},
-          "orderItems":[
-            {"product":{"id":%d},"quantity":2},
-            {"product":{"id":%d},"quantity":1}
-          ]
+          "user":{"id":%d}
         }
-        """, user.getId(), product1.getId(), product2.getId());
+        """, user.getId());
 
-        var response = client.toBlocking().exchange(
-            HttpRequest.POST("/orders", orderJson),
-            Order.class
-        );
-        
-        assertEquals(HttpStatus.OK, response.status());
-        Order order = response.body();
-        assertNotNull(order.getId());
+        try {
+            var simpleResponse = client.toBlocking().exchange(
+                HttpRequest.POST("/orders", simpleOrderJson),
+                Order.class
+            );
+            
+            assertEquals(HttpStatus.OK, simpleResponse.status());
+            Order simpleOrder = simpleResponse.body();
+            assertNotNull(simpleOrder.getId());
+            
+            // Now test with items
+            String orderJson = String.format("""
+            {
+              "user":{"id":%d},
+              "orderItems":[
+                {"product":{"id":%d},"quantity":2},
+                {"product":{"id":%d},"quantity":1}
+              ]
+            }
+            """, user.getId(), product1.getId(), product2.getId());
 
-        var getResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/orders/" + order.getId()),
-            String.class
-        );
-        
-        assertEquals(HttpStatus.OK, getResponse.status());
-        assertTrue(getResponse.body().contains("orderItems"));
+            var response = client.toBlocking().exchange(
+                HttpRequest.POST("/orders", orderJson),
+                Order.class
+            );
+            
+            assertEquals(HttpStatus.OK, response.status());
+            Order order = response.body();
+            assertNotNull(order.getId());
 
-        var itemsResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/orders/" + order.getId() + "/items"),
-            String.class
-        );
-        
-        assertEquals(HttpStatus.OK, itemsResponse.status());
+            var getResponse = client.toBlocking().exchange(
+                HttpRequest.GET("/orders/" + order.getId()),
+                String.class
+            );
+            
+            assertEquals(HttpStatus.OK, getResponse.status());
+            assertTrue(getResponse.body().contains("orderItems"));
+
+            var itemsResponse = client.toBlocking().exchange(
+                HttpRequest.GET("/orders/" + order.getId() + "/items"),
+                String.class
+            );
+            
+            assertEquals(HttpStatus.OK, itemsResponse.status());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

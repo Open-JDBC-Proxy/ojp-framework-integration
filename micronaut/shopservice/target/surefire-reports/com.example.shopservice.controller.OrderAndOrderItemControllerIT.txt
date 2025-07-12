@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.example.shopservice.controller.OrderAndOrderItemControllerIT
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.299 s <<< FAILURE! -- in com.example.shopservice.controller.OrderAndOrderItemControllerIT
-com.example.shopservice.controller.OrderAndOrderItemControllerIT.createOrderWithItemsAndGetItems -- Time elapsed: 0.096 s <<< ERROR!
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 3.637 s <<< FAILURE! -- in com.example.shopservice.controller.OrderAndOrderItemControllerIT
+com.example.shopservice.controller.OrderAndOrderItemControllerIT.createOrderWithItemsAndGetItems -- Time elapsed: 0.867 s <<< ERROR!
 io.micronaut.http.client.exceptions.HttpClientResponseException: Internal Server Error
 	at io.micronaut.http.client.netty.DefaultHttpClient$FullHttpResponseHandler.makeErrorFromRequestBody(DefaultHttpClient.java:2251)
 	at io.micronaut.http.client.netty.DefaultHttpClient$FullHttpResponseHandler.forwardResponseToPromise(DefaultHttpClient.java:2202)
@@ -57,7 +57,7 @@ io.micronaut.http.client.exceptions.HttpClientResponseException: Internal Server
 		at io.micronaut.http.client.netty.DefaultHttpClient$1.exchange(DefaultHttpClient.java:570)
 		at io.micronaut.http.client.BlockingHttpClient.exchange(BlockingHttpClient.java:77)
 		at io.micronaut.http.client.BlockingHttpClient.exchange(BlockingHttpClient.java:106)
-		at com.example.shopservice.controller.OrderAndOrderItemControllerIT.createOrderWithItemsAndGetItems(OrderAndOrderItemControllerIT.java:81)
+		at com.example.shopservice.controller.OrderAndOrderItemControllerIT.createOrderWithItemsAndGetItems(OrderAndOrderItemControllerIT.java:99)
 		at java.base/java.lang.reflect.Method.invoke(Method.java:569)
 		at io.micronaut.test.extensions.junit5.MicronautJunit5Extension$2.proceed(MicronautJunit5Extension.java:142)
 		at io.micronaut.test.extensions.AbstractMicronautExtension.interceptEach(AbstractMicronautExtension.java:157)

@@ -27,26 +27,34 @@ public class OrderController {
 
     @Post
     public HttpResponse<Order> create(@Body Order order) {
-        if (order.getUser() == null || order.getUser().getId() == null) {
-            return HttpResponse.badRequest();
-        }
-        Optional<User> userOpt = userRepository.findById(order.getUser().getId());
-        if (userOpt.isEmpty()) return HttpResponse.badRequest();
-
-        order.setUser(userOpt.get());
-
-        List<OrderItem> items = order.getOrderItems();
-        if (items != null) {
-            for (OrderItem item : items) {
-                if (item.getProduct() == null || item.getProduct().getId() == null)
-                    return HttpResponse.badRequest();
-                Optional<Product> prodOpt = productRepository.findById(item.getProduct().getId());
-                if (prodOpt.isEmpty()) return HttpResponse.badRequest();
-                item.setProduct(prodOpt.get());
-                item.setOrder(order);
+        try {
+            if (order.getUser() == null || order.getUser().getId() == null) {
+                return HttpResponse.badRequest();
             }
+            Optional<User> userOpt = userRepository.findById(order.getUser().getId());
+            if (userOpt.isEmpty()) return HttpResponse.badRequest();
+
+            order.setUser(userOpt.get());
+
+            // Handle order items if present
+            List<OrderItem> items = order.getOrderItems();
+            if (items != null) {
+                for (OrderItem item : items) {
+                    if (item.getProduct() == null || item.getProduct().getId() == null)
+                        return HttpResponse.badRequest();
+                    Optional<Product> prodOpt = productRepository.findById(item.getProduct().getId());
+                    if (prodOpt.isEmpty()) return HttpResponse.badRequest();
+                    item.setProduct(prodOpt.get());
+                    item.setOrder(order);
+                }
+            }
+            Order savedOrder = orderRepository.save(order);
+            return HttpResponse.ok(savedOrder);
+        } catch (Exception e) {
+            // Log the error for debugging
+            e.printStackTrace();
+            return HttpResponse.serverError();
         }
-        return HttpResponse.ok(orderRepository.save(order));
     }
 
     @Get
