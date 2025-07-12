@@ -8,11 +8,11 @@ import jakarta.persistence.*;
 public class OrderItem {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "order_id")
     @JsonBackReference
     private Order order;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "product_id")
     private Product product;
     private int quantity;
