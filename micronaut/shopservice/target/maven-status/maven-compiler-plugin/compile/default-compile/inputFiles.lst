@@ -1,0 +1,16 @@
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/entity/OrderItem.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/controller/ReviewController.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/entity/Order.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/ShopServiceApplication.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/controller/UserController.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/controller/OrderItemController.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/entity/Product.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/repository/ReviewRepository.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/repository/ProductRepository.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/repository/OrderRepository.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/entity/User.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/controller/OrderController.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/entity/Review.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/controller/ProductController.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/repository/UserRepository.java
+/home/runner/work/ojp-framework-integration/ojp-framework-integration/micronaut/shopservice/src/main/java/com/example/shopservice/repository/OrderItemRepository.java
