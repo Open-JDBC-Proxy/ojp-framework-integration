@@ -43,9 +43,10 @@ This project demonstrates a multi-entity, relational domain model with CRUD oper
 
 ### 1. Clone the repository
 
->  git clone <YOUR_REPO_URL>
+>   git clone https://github.com/Open-JDBC-Proxy/ojp-framework-integration.git
 
->  cd shopservice
+>   cd spring-boot/shopservice
+
 
 ### 2. Configure the database
 
