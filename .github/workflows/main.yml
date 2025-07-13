@@ -9,14 +9,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout shopservice code
         uses: actions/checkout@v4
+
+      - name: Checkout OJP Server service
+        uses: actions/checkout@v4
+        with:
+          repository: Open-JDBC-Proxy/ojp
+          ref: main
+          path: ojp
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Run (ojp-server)
+        run: mvn verify -pl ojp-server -Prun-ojp-server > ojp-server.log 2>&1 &
 
       - name: Build with Maven (shopservice)
         run: mvn clean verify
