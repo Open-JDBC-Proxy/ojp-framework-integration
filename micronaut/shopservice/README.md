@@ -72,5 +72,4 @@ All endpoints accept and return JSON, matching the Spring Boot implementation ex
 ```sh
 mvn clean test
 ```
-
 Integration tests use H2 in-memory database with test-specific properties (`src/test/resources/application.properties`).
