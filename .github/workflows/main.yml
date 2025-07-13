@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [ main ]
+  repository_dispatch:
+    types: [ojp-updated]
 
 jobs:
   build:
@@ -11,11 +15,14 @@ jobs:
     steps:
       - name: Checkout shopservice code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Checkout OJP Server service
         uses: actions/checkout@v4
         with:
           repository: Open-JDBC-Proxy/ojp
+          fetch-depth: 0
           ref: main
           path: ojp
 
@@ -27,6 +34,10 @@ jobs:
 
       - name: Run (ojp-server)
         run: mvn verify -pl ojp-server -Prun-ojp-server > ojp-server.log 2>&1 &
+        working-directory: ojp
+
+      - name: Wait for ojp-server to start
+        run: sleep 10
 
       - name: Build with Maven (shopservice)
         run: mvn clean verify
