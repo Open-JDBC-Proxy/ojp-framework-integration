@@ -32,6 +32,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Install (ojp-common)
+        run: mvn clean install -N -DskipTests
+        working-directory: ojp/ojp-jdbc-driver
+
       - name: Install (ojp-jdbc-driver)
         run: mvn clean install -DskipTests
         working-directory: ojp/ojp-jdbc-driver
