@@ -43,6 +43,15 @@ jobs:
       - name: Wait for ojp-server to start
         run: sleep 10
 
+
+      - name: Build with Maven (shopservice)
+        run: mvn clean verify
+        working-directory: spring-boot/shopservice
+
       - name: Build with Maven (shopservice)
         run: mvn clean verify
         working-directory: quarkus/shopservice
+
+      - name: Build with Maven (shopservice)
+        run: mvn clean verify
+        working-directory: micronaut/shopservice
