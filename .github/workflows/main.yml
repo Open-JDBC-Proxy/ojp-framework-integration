@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout OJP Server service
+      - name: Checkout OJP repository
         uses: actions/checkout@v4
         with:
           repository: Open-JDBC-Proxy/ojp
@@ -32,13 +32,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Install (ojp-jdbc-driver)
+        run: mvn clean install -DskipTests
+        working-directory: ojp/ojp-jdbc-driver
+
       - name: Run (ojp-server)
         run: mvn verify -pl ojp-server -Prun-ojp-server > ojp-server.log 2>&1 &
-        working-directory: ojp
+        working-directory: ojp/ojp-server
 
       - name: Wait for ojp-server to start
         run: sleep 10
 
       - name: Build with Maven (shopservice)
-        run: mvn clean verify -U
+        run: mvn clean verify
         working-directory: quarkus/shopservice

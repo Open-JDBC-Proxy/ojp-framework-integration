@@ -56,11 +56,11 @@
         </dependency>
 
         <!-- H2 Database -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.2.224</version>
-        </dependency>
+        </dependency>-->
 
         <!-- Jakarta Persistence API -->
         <dependency>
@@ -74,6 +74,12 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>6.4.8.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdbcproxy</groupId>
+            <artifactId>ojp-jdbc-driver</artifactId>
+            <version>0.0.5-alpha</version>
         </dependency>
 
         <!-- Test Dependencies -->
