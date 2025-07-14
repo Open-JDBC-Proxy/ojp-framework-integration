@@ -44,14 +44,14 @@ jobs:
         run: sleep 10
 
 
-      - name: Build with Maven (shopservice)
+      - name: Run OJP Spring Boot Integration tests (shopservice)
         run: mvn clean verify
         working-directory: spring-boot/shopservice
 
-      - name: Build with Maven (shopservice)
+      - name: Run OJP Quarkus Integration tests (shopservice)
         run: mvn clean verify
         working-directory: quarkus/shopservice
 
-      - name: Build with Maven (shopservice)
+      - name: Run OJP Micronaut Integration tests (shopservice)
         run: mvn clean verify
         working-directory: micronaut/shopservice
