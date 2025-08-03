@@ -60,13 +60,13 @@ public class ReviewControllerIT {
     }
 
     @Test
-    void testCreateAndGetReview() throws Exception {
+    void testCreateReview() throws Exception {
         String reviewJson = String.format("""
         {
           "user":{"id":%d},
           "product":{"id":%d},
           "rating":5,
-          "comment":"Awesome!"
+          "comment":"Excellent!"
         }
         """, user.getId(), product.getId());
 
@@ -76,13 +76,70 @@ public class ReviewControllerIT {
         );
         
         assertEquals(HttpStatus.OK, response.status());
+        assertTrue(response.body().contains("\"rating\":5"));
+        assertTrue(response.body().contains("\"comment\":\"Excellent!\""));
+    }
 
-        var listResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/reviews"),
+    @Test
+    void testGetReview() throws Exception {
+        String reviewJson = String.format("""
+        {
+          "user":{"id":%d},
+          "product":{"id":%d},
+          "rating":4,
+          "comment":"Good!"
+        }
+        """, user.getId(), product.getId());
+
+        var createResponse = client.toBlocking().exchange(
+            HttpRequest.POST("/reviews", reviewJson),
             String.class
         );
         
-        assertEquals(HttpStatus.OK, listResponse.status());
-        assertTrue(listResponse.body().contains("content"));
+        // Extract review ID from response
+        String responseBody = createResponse.body();
+        Long reviewId = Long.parseLong(responseBody.substring(responseBody.indexOf("\"id\":") + 5, responseBody.indexOf(",", responseBody.indexOf("\"id\":"))));
+
+        var getResponse = client.toBlocking().exchange(
+            HttpRequest.GET("/reviews/" + reviewId),
+            String.class
+        );
+        
+        assertEquals(HttpStatus.OK, getResponse.status());
+        assertTrue(getResponse.body().contains("\"rating\":4"));
+        assertTrue(getResponse.body().contains("\"comment\":\"Good!\""));
+    }
+
+    @Test
+    void testDeleteReview() throws Exception {
+        String reviewJson = String.format("""
+        {
+          "user":{"id":%d},
+          "product":{"id":%d},
+          "rating":2,
+          "comment":"Not great."
+        }
+        """, user.getId(), product.getId());
+
+        var createResponse = client.toBlocking().exchange(
+            HttpRequest.POST("/reviews", reviewJson),
+            String.class
+        );
+        
+        // Extract review ID from response
+        String responseBody = createResponse.body();
+        Long reviewId = Long.parseLong(responseBody.substring(responseBody.indexOf("\"id\":") + 5, responseBody.indexOf(",", responseBody.indexOf("\"id\":"))));
+
+        var deleteResponse = client.toBlocking().exchange(
+            HttpRequest.DELETE("/reviews/" + reviewId)
+        );
+        
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
+
+        var getResponse = client.toBlocking().exchange(
+            HttpRequest.GET("/reviews/" + reviewId)
+        );
+        
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.status());
     }
 }

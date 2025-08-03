@@ -40,7 +40,7 @@ public class UserControllerIT {
     }
 
     @Test
-    void testCreateAndGetUser() throws Exception {
+    void testCreateUser() throws Exception {
         String json = "{\"username\":\"alice\",\"email\":\"alice@example.com\"}";
         var response = client.toBlocking().exchange(
             HttpRequest.POST("/users", json),
@@ -51,14 +51,72 @@ public class UserControllerIT {
         User created = response.body();
         assertNotNull(created.getId());
         assertEquals("alice", created.getUsername());
+        assertEquals("alice@example.com", created.getEmail());
+    }
+
+    @Test
+    void testGetUser() throws Exception {
+        String json = "{\"username\":\"bob\",\"email\":\"bob@example.com\"}";
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/users", json),
+            User.class
+        );
+        
+        Long id = response.body().getId();
 
         var getResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/users/" + created.getId()),
+            HttpRequest.GET("/users/" + id),
             User.class
         );
         
         assertEquals(HttpStatus.OK, getResponse.status());
         User retrieved = getResponse.body();
-        assertEquals("alice@example.com", retrieved.getEmail());
+        assertEquals("bob", retrieved.getUsername());
+        assertEquals("bob@example.com", retrieved.getEmail());
+    }
+
+    @Test
+    void testUpdateUser() throws Exception {
+        String json = "{\"username\":\"carol\",\"email\":\"carol@example.com\"}";
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/users", json),
+            User.class
+        );
+        
+        Long id = response.body().getId();
+
+        String updateJson = "{\"username\":\"carol_updated\",\"email\":\"carol_updated@example.com\"}";
+        var updateResponse = client.toBlocking().exchange(
+            HttpRequest.PUT("/users/" + id, updateJson),
+            User.class
+        );
+        
+        assertEquals(HttpStatus.OK, updateResponse.status());
+        User updated = updateResponse.body();
+        assertEquals("carol_updated", updated.getUsername());
+        assertEquals("carol_updated@example.com", updated.getEmail());
+    }
+
+    @Test
+    void testDeleteUser() throws Exception {
+        String json = "{\"username\":\"dave\",\"email\":\"dave@example.com\"}";
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/users", json),
+            User.class
+        );
+        
+        Long id = response.body().getId();
+
+        var deleteResponse = client.toBlocking().exchange(
+            HttpRequest.DELETE("/users/" + id)
+        );
+        
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
+
+        var getResponse = client.toBlocking().exchange(
+            HttpRequest.GET("/users/" + id)
+        );
+        
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.status());
     }
 }
