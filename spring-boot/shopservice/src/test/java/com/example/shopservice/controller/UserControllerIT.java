@@ -55,4 +55,41 @@ public class UserControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("alice@example.com"));
     }
+
+    @Test
+    void testUpdateUser() throws Exception {
+        String createJson = "{\"username\":\"bob\",\"email\":\"bob@example.com\"}";
+        String response = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        User user = userRepository.findAll().get(0);
+        
+        String updateJson = "{\"username\":\"bob_updated\",\"email\":\"bob_updated@example.com\"}";
+        mockMvc.perform(put("/users/" + user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("bob_updated"))
+                .andExpect(jsonPath("$.email").value("bob_updated@example.com"));
+    }
+
+    @Test
+    void testDeleteUser() throws Exception {
+        String createJson = "{\"username\":\"charlie\",\"email\":\"charlie@example.com\"}";
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(createJson))
+                .andExpect(status().isOk());
+
+        User user = userRepository.findAll().get(0);
+        
+        mockMvc.perform(delete("/users/" + user.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/users/" + user.getId()))
+                .andExpect(status().isNotFound());
+    }
 }
