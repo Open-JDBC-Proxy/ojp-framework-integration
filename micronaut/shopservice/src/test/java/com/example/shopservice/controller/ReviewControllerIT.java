@@ -9,6 +9,7 @@ import com.example.shopservice.repository.ReviewRepository;
 import com.example.shopservice.repository.UserRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -71,7 +72,8 @@ public class ReviewControllerIT {
         """, user.getId(), product.getId());
 
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/reviews", reviewJson),
+            HttpRequest.POST("/reviews", reviewJson)
+                .contentType(MediaType.APPLICATION_JSON),
             String.class
         );
         
@@ -92,7 +94,8 @@ public class ReviewControllerIT {
         """, user.getId(), product.getId());
 
         var createResponse = client.toBlocking().exchange(
-            HttpRequest.POST("/reviews", reviewJson),
+            HttpRequest.POST("/reviews", reviewJson)
+                .contentType(MediaType.APPLICATION_JSON),
             String.class
         );
         
@@ -122,7 +125,8 @@ public class ReviewControllerIT {
         """, user.getId(), product.getId());
 
         var createResponse = client.toBlocking().exchange(
-            HttpRequest.POST("/reviews", reviewJson),
+            HttpRequest.POST("/reviews", reviewJson)
+                .contentType(MediaType.APPLICATION_JSON),
             String.class
         );
         
@@ -136,10 +140,15 @@ public class ReviewControllerIT {
         
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
 
-        var getResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/reviews/" + reviewId)
-        );
-        
-        assertEquals(HttpStatus.NOT_FOUND, getResponse.status());
+        // Use exception handling for 404 check
+        try {
+            client.toBlocking().exchange(
+                HttpRequest.GET("/reviews/" + reviewId),
+                String.class
+            );
+            fail("Expected 404 Not Found");
+        } catch (io.micronaut.http.client.exceptions.HttpClientResponseException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+        }
     }
 }

@@ -10,6 +10,7 @@ import com.example.shopservice.repository.ReviewRepository;
 import com.example.shopservice.repository.UserRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -74,7 +75,8 @@ public class OrderAndOrderItemControllerIT {
         """, user.getId());
 
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/orders", simpleOrderJson),
+            HttpRequest.POST("/orders", simpleOrderJson)
+                .contentType(MediaType.APPLICATION_JSON),
             Order.class
         );
         
@@ -93,7 +95,8 @@ public class OrderAndOrderItemControllerIT {
         """, user.getId());
 
         var createResponse = client.toBlocking().exchange(
-            HttpRequest.POST("/orders", simpleOrderJson),
+            HttpRequest.POST("/orders", simpleOrderJson)
+                .contentType(MediaType.APPLICATION_JSON),
             Order.class
         );
         
@@ -118,7 +121,8 @@ public class OrderAndOrderItemControllerIT {
         """, user.getId());
 
         var createResponse = client.toBlocking().exchange(
-            HttpRequest.POST("/orders", simpleOrderJson),
+            HttpRequest.POST("/orders", simpleOrderJson)
+                .contentType(MediaType.APPLICATION_JSON),
             Order.class
         );
         
@@ -130,10 +134,15 @@ public class OrderAndOrderItemControllerIT {
         
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
 
-        var getResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/orders/" + orderId)
-        );
-        
-        assertEquals(HttpStatus.NOT_FOUND, getResponse.status());
+        // Use exception handling for 404 check
+        try {
+            client.toBlocking().exchange(
+                HttpRequest.GET("/orders/" + orderId),
+                Order.class
+            );
+            fail("Expected 404 Not Found");
+        } catch (io.micronaut.http.client.exceptions.HttpClientResponseException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.example.shopservice.repository.ReviewRepository;
 import com.example.shopservice.repository.UserRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -43,7 +44,8 @@ public class UserControllerIT {
     void testCreateUser() throws Exception {
         String json = "{\"username\":\"alice\",\"email\":\"alice@example.com\"}";
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/users", json),
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
             User.class
         );
         
@@ -58,7 +60,8 @@ public class UserControllerIT {
     void testGetUser() throws Exception {
         String json = "{\"username\":\"bob\",\"email\":\"bob@example.com\"}";
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/users", json),
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
             User.class
         );
         
@@ -77,17 +80,21 @@ public class UserControllerIT {
 
     @Test
     void testUpdateUser() throws Exception {
+        // First create a user
         String json = "{\"username\":\"carol\",\"email\":\"carol@example.com\"}";
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/users", json),
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
             User.class
         );
         
         Long id = response.body().getId();
 
+        // Use JSON for update
         String updateJson = "{\"username\":\"carol_updated\",\"email\":\"carol_updated@example.com\"}";
         var updateResponse = client.toBlocking().exchange(
-            HttpRequest.PUT("/users/" + id, updateJson),
+            HttpRequest.PUT("/users/" + id, updateJson)
+                .contentType(MediaType.APPLICATION_JSON),
             User.class
         );
         
@@ -101,7 +108,8 @@ public class UserControllerIT {
     void testDeleteUser() throws Exception {
         String json = "{\"username\":\"dave\",\"email\":\"dave@example.com\"}";
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/users", json),
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
             User.class
         );
         
@@ -113,10 +121,15 @@ public class UserControllerIT {
         
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
 
-        var getResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/users/" + id)
-        );
-        
-        assertEquals(HttpStatus.NOT_FOUND, getResponse.status());
+        // Use exception handling for 404 check
+        try {
+            client.toBlocking().exchange(
+                HttpRequest.GET("/users/" + id),
+                User.class
+            );
+            fail("Expected 404 Not Found");
+        } catch (io.micronaut.http.client.exceptions.HttpClientResponseException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+        }
     }
 }
