@@ -42,9 +42,9 @@ public class OrderAndOrderItemControllerIT {
 
     @BeforeEach
     void setup() {
+        orderRepository.deleteAll();
         userRepository.deleteAll();
         productRepository.deleteAll();
-        orderRepository.deleteAll();
         User userObj = new User();
         userObj.setUsername("bob");
         userObj.setEmail("bob@example.com");
