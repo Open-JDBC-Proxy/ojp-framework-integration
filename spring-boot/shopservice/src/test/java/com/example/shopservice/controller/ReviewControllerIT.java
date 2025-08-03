@@ -1,12 +1,14 @@
 package com.example.shopservice.controller;
 
 import com.example.shopservice.entity.Product;
+import com.example.shopservice.entity.Review;
 import com.example.shopservice.entity.User;
 import com.example.shopservice.repository.OrderItemRepository;
 import com.example.shopservice.repository.OrderRepository;
 import com.example.shopservice.repository.ProductRepository;
 import com.example.shopservice.repository.ReviewRepository;
 import com.example.shopservice.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ public class ReviewControllerIT {
     private OrderRepository orderRepository;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private User user;
     private Product product;
@@ -81,5 +85,32 @@ public class ReviewControllerIT {
         mockMvc.perform(get("/reviews"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", not(empty())));
+    }
+
+    @Test
+    void testDeleteReview() throws Exception {
+        String reviewJson = """
+        {
+          "user":{"id":%d},
+          "product":{"id":%d},
+          "rating":3,
+          "comment":"Not great"
+        }
+        """.formatted(user.getId(), product.getId());
+
+        String response = mockMvc.perform(post("/reviews")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reviewJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andReturn().getResponse().getContentAsString();
+
+        Review review = objectMapper.readValue(response, Review.class);
+        
+        mockMvc.perform(delete("/reviews/" + review.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/reviews/" + review.getId()))
+                .andExpect(status().isNotFound());
     }
 }

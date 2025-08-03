@@ -90,4 +90,28 @@ public class OrderAndOrderItemControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
+
+    @Test
+    void testDeleteOrder() throws Exception {
+        String orderJson = """
+        {
+          "user":{"id":%d}
+        }
+        """.formatted(user.getId());
+
+        String response = mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andReturn().getResponse().getContentAsString();
+
+        Order order = objectMapper.readValue(response, Order.class);
+
+        mockMvc.perform(delete("/orders/" + order.getId()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/orders/" + order.getId()))
+                .andExpect(status().isNotFound());
+    }
 }
