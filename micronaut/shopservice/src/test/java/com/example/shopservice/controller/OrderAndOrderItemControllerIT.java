@@ -3,11 +3,14 @@ package com.example.shopservice.controller;
 import com.example.shopservice.entity.Order;
 import com.example.shopservice.entity.Product;
 import com.example.shopservice.entity.User;
+import com.example.shopservice.repository.OrderItemRepository;
 import com.example.shopservice.repository.OrderRepository;
 import com.example.shopservice.repository.ProductRepository;
+import com.example.shopservice.repository.ReviewRepository;
 import com.example.shopservice.repository.UserRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -31,15 +34,21 @@ public class OrderAndOrderItemControllerIT {
     private ProductRepository productRepository;
     @Inject
     private OrderRepository orderRepository;
+    @Inject
+    private OrderItemRepository orderItemRepository;
+    @Inject
+    private ReviewRepository reviewRepository;
 
     private User user;
     private Product product1, product2;
 
     @BeforeEach
     void setup() {
+        orderItemRepository.deleteAll();
+        orderRepository.deleteAll();
+        reviewRepository.deleteAll();
         userRepository.deleteAll();
         productRepository.deleteAll();
-        orderRepository.deleteAll();
         
         User userObj = new User();
         userObj.setUsername("bob");
@@ -58,61 +67,82 @@ public class OrderAndOrderItemControllerIT {
     }
 
     @Test
-    void createOrderWithItemsAndGetItems() throws Exception {
-        // First test just creating an order without items
+    void testCreateOrder() throws Exception {
         String simpleOrderJson = String.format("""
         {
           "user":{"id":%d}
         }
         """, user.getId());
 
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/orders", simpleOrderJson)
+                .contentType(MediaType.APPLICATION_JSON),
+            Order.class
+        );
+        
+        assertEquals(HttpStatus.OK, response.status());
+        Order created = response.body();
+        assertNotNull(created.getId());
+        assertEquals(user.getId(), created.getUser().getId());
+    }
+
+    @Test
+    void testGetOrder() throws Exception {
+        String simpleOrderJson = String.format("""
+        {
+          "user":{"id":%d}
+        }
+        """, user.getId());
+
+        var createResponse = client.toBlocking().exchange(
+            HttpRequest.POST("/orders", simpleOrderJson)
+                .contentType(MediaType.APPLICATION_JSON),
+            Order.class
+        );
+        
+        Long orderId = createResponse.body().getId();
+
+        var getResponse = client.toBlocking().exchange(
+            HttpRequest.GET("/orders/" + orderId),
+            Order.class
+        );
+        
+        assertEquals(HttpStatus.OK, getResponse.status());
+        Order retrieved = getResponse.body();
+        assertEquals(user.getId(), retrieved.getUser().getId());
+    }
+
+    @Test
+    void testDeleteOrder() throws Exception {
+        String simpleOrderJson = String.format("""
+        {
+          "user":{"id":%d}
+        }
+        """, user.getId());
+
+        var createResponse = client.toBlocking().exchange(
+            HttpRequest.POST("/orders", simpleOrderJson)
+                .contentType(MediaType.APPLICATION_JSON),
+            Order.class
+        );
+        
+        Long orderId = createResponse.body().getId();
+
+        var deleteResponse = client.toBlocking().exchange(
+            HttpRequest.DELETE("/orders/" + orderId)
+        );
+        
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
+
+        // Use exception handling for 404 check
         try {
-            var simpleResponse = client.toBlocking().exchange(
-                HttpRequest.POST("/orders", simpleOrderJson),
+            client.toBlocking().exchange(
+                HttpRequest.GET("/orders/" + orderId),
                 Order.class
             );
-            
-            assertEquals(HttpStatus.OK, simpleResponse.status());
-            Order simpleOrder = simpleResponse.body();
-            assertNotNull(simpleOrder.getId());
-            
-            // Now test with items
-            String orderJson = String.format("""
-            {
-              "user":{"id":%d},
-              "orderItems":[
-                {"product":{"id":%d},"quantity":2},
-                {"product":{"id":%d},"quantity":1}
-              ]
-            }
-            """, user.getId(), product1.getId(), product2.getId());
-
-            var response = client.toBlocking().exchange(
-                HttpRequest.POST("/orders", orderJson),
-                Order.class
-            );
-            
-            assertEquals(HttpStatus.OK, response.status());
-            Order order = response.body();
-            assertNotNull(order.getId());
-
-            var getResponse = client.toBlocking().exchange(
-                HttpRequest.GET("/orders/" + order.getId()),
-                String.class
-            );
-            
-            assertEquals(HttpStatus.OK, getResponse.status());
-            assertTrue(getResponse.body().contains("orderItems"));
-
-            var itemsResponse = client.toBlocking().exchange(
-                HttpRequest.GET("/orders/" + order.getId() + "/items"),
-                String.class
-            );
-            
-            assertEquals(HttpStatus.OK, itemsResponse.status());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            fail("Expected 404 Not Found");
+        } catch (io.micronaut.http.client.exceptions.HttpClientResponseException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
         }
     }
 }

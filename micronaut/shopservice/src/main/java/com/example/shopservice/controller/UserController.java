@@ -7,6 +7,7 @@ import io.micronaut.data.model.Pageable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @Controller("/users")
 public class UserController {
@@ -14,6 +15,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @Post
+    @Transactional
     public User create(@Body User user) {
         return userRepository.save(user);
     }
@@ -31,9 +33,12 @@ public class UserController {
     }
 
     @Put("/{id}")
+    @Transactional
     public HttpResponse<User> update(@PathVariable Long id, @Body User user) {
         return userRepository.findById(id)
                 .map(existing -> {
+                    // Clear any potential ID from the incoming object to avoid detached entity issues
+                    user.setId(null);
                     existing.setUsername(user.getUsername());
                     existing.setEmail(user.getEmail());
                     return HttpResponse.ok(userRepository.save(existing));
@@ -42,6 +47,7 @@ public class UserController {
     }
 
     @Delete("/{id}")
+    @Transactional
     public HttpResponse<Object> delete(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(existing -> {

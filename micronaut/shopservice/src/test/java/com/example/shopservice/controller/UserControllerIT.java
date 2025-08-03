@@ -7,6 +7,7 @@ import com.example.shopservice.repository.ReviewRepository;
 import com.example.shopservice.repository.UserRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -40,10 +41,11 @@ public class UserControllerIT {
     }
 
     @Test
-    void testCreateAndGetUser() throws Exception {
+    void testCreateUser() throws Exception {
         String json = "{\"username\":\"alice\",\"email\":\"alice@example.com\"}";
         var response = client.toBlocking().exchange(
-            HttpRequest.POST("/users", json),
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
             User.class
         );
         
@@ -51,14 +53,83 @@ public class UserControllerIT {
         User created = response.body();
         assertNotNull(created.getId());
         assertEquals("alice", created.getUsername());
+        assertEquals("alice@example.com", created.getEmail());
+    }
+
+    @Test
+    void testGetUser() throws Exception {
+        String json = "{\"username\":\"bob\",\"email\":\"bob@example.com\"}";
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
+            User.class
+        );
+        
+        Long id = response.body().getId();
 
         var getResponse = client.toBlocking().exchange(
-            HttpRequest.GET("/users/" + created.getId()),
+            HttpRequest.GET("/users/" + id),
             User.class
         );
         
         assertEquals(HttpStatus.OK, getResponse.status());
         User retrieved = getResponse.body();
-        assertEquals("alice@example.com", retrieved.getEmail());
+        assertEquals("bob", retrieved.getUsername());
+        assertEquals("bob@example.com", retrieved.getEmail());
+    }
+
+    @Test
+    void testUpdateUser() throws Exception {
+        // First create a user
+        String json = "{\"username\":\"carol\",\"email\":\"carol@example.com\"}";
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
+            User.class
+        );
+        
+        Long id = response.body().getId();
+
+        // Use JSON for update
+        String updateJson = "{\"username\":\"carol_updated\",\"email\":\"carol_updated@example.com\"}";
+        var updateResponse = client.toBlocking().exchange(
+            HttpRequest.PUT("/users/" + id, updateJson)
+                .contentType(MediaType.APPLICATION_JSON),
+            User.class
+        );
+        
+        assertEquals(HttpStatus.OK, updateResponse.status());
+        User updated = updateResponse.body();
+        assertEquals("carol_updated", updated.getUsername());
+        assertEquals("carol_updated@example.com", updated.getEmail());
+    }
+
+    @Test
+    void testDeleteUser() throws Exception {
+        String json = "{\"username\":\"dave\",\"email\":\"dave@example.com\"}";
+        var response = client.toBlocking().exchange(
+            HttpRequest.POST("/users", json)
+                .contentType(MediaType.APPLICATION_JSON),
+            User.class
+        );
+        
+        Long id = response.body().getId();
+
+        var deleteResponse = client.toBlocking().exchange(
+            HttpRequest.DELETE("/users/" + id)
+        );
+        
+        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.status());
+
+        // Use exception handling for 404 check
+        try {
+            client.toBlocking().exchange(
+                HttpRequest.GET("/users/" + id),
+                User.class
+            );
+            fail("Expected 404 Not Found");
+        } catch (io.micronaut.http.client.exceptions.HttpClientResponseException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+        }
     }
 }
