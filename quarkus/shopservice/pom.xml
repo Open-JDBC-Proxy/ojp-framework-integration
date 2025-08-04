@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.openjdbcproxy</groupId>
             <artifactId>ojp-jdbc-driver</artifactId>
-            <version>0.0.5-alpha</version>
+            <version>0.0.7-alpha</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
