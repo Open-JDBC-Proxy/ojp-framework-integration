@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
     <artifactId>shopservice</artifactId>
-    <version>0.0.7-alpha</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>shopservice</name>
     <description>Micronaut Shop Service</description>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.openjdbcproxy</groupId>
             <artifactId>ojp-jdbc-driver</artifactId>
-            <version>0.0.7-alpha</version>
+            <version>0.1.0-beta</version>
         </dependency>
 
         <!-- Test Dependencies -->
