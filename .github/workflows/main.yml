@@ -1,4 +1,4 @@
-name: Maven Verify Shopservice
+name: Spring Boot/Micronaut/Quarkus Integration
 
 on:
   push:
