@@ -54,7 +54,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openjdbcproxy</groupId>
+            <groupId>org.openjproxy</groupId>
             <artifactId>ojp-jdbc-driver</artifactId>
             <version>0.0.7-alpha</version>
         </dependency>

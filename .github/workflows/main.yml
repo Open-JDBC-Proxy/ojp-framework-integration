@@ -21,7 +21,7 @@ jobs:
       - name: Checkout OJP repository
         uses: actions/checkout@v4
         with:
-          repository: Open-JDBC-Proxy/ojp
+          repository: Open-J-Proxy/ojp
           fetch-depth: 0
           ref: main
           path: ojp
