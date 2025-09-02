@@ -1,6 +1,6 @@
 # ShopService
 
-A sample Spring Boot RESTful API for validating integration with OJP(Open J proxy).
+A sample Spring Boot RESTful API for validating integration with OJP(Open J Proxy).
 The sample app is intended for managing a shop’s users, products, orders, order items, and product reviews.  
 This project demonstrates a multi-entity, relational domain model with CRUD operations, integration testing, and a PostgreSQL (or H2 for tests) backend.
 
